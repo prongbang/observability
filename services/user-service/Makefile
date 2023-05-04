@@ -18,3 +18,9 @@ get_user:
 #   	"username": "em",
 #   	"password": "1234"
 # 	}
+
+build_image:
+	docker build -t user-service .
+
+run_image:
+	docker run -p 50051:50051 user-service
