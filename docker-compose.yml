@@ -43,4 +43,9 @@ services:
 
   coin_service:
     container_name: coin-service
+    build:
+      context: ./
+      dockerfile: ./services/coin-service/Dockerfile
+    ports:
+      - 50053:50053
 
