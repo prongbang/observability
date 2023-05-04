@@ -1,25 +1,38 @@
 services:
   grafana:
+    container_name: grafana
 
   jaeger:
+    container_name: jaeger
 
   loki:
+    container_name: loki
 
   prometheus:
+    container_name: prometheus
 
   main_service:
+    container_name: main-service
     depends_on:
-      - auth_service
-      - user_service
-      - coin_service
+      - auth-service
+      - user-service
+      - coin-service
 
   auth_service:
+    container_name: auth-service
     depends_on:
-      - user_service
+      - user-service
 
   user_service:
+    container_name: user-service
+    build:
+      context: ./
+      dockerfile: ./services/user-service/Dockerfile
+    ports:
+      - 50051:50051
     depends_on:
-      - coin_service
+      - coin-service
 
   coin_service:
+    container_name: coin-service
 
