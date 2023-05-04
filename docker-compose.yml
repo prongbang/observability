@@ -13,6 +13,9 @@ services:
 
   main_service:
     container_name: main-service
+    build:
+      context: ./
+      dockerfile: ./services/main-service/Dockerfile
     depends_on:
       - auth-service
       - user-service
