@@ -1,0 +1,25 @@
+services:
+  grafana:
+
+  jaeger:
+
+  loki:
+
+  prometheus:
+
+  main_service:
+    depends_on:
+      - auth_service
+      - user_service
+      - coin_service
+
+  auth_service:
+    depends_on:
+      - user_service
+
+  user_service:
+    depends_on:
+      - coin_service
+
+  coin_service:
+
