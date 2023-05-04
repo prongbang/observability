@@ -1,7 +1,7 @@
 use user::user_client::UserClient;
 use user::UserRequest;
 
-pub mod user {
+mod user {
     tonic::include_proto!("user");
 }
 

@@ -3,7 +3,7 @@ use tonic::{transport::Server, Request, Response, Status};
 use user::user_server::{User, UserServer};
 use user::{UserResponse, UserRequest};
 
-pub mod user {
+mod user {
     tonic::include_proto!("user"); // The string specified here must match the proto package name
 }
 
@@ -18,7 +18,7 @@ impl User for MyUser {
     ) -> Result<Response<UserResponse>, Status> {
         println!("Got a request: {:?}", request);
 
-        let response = user::UserResponse {
+        let response = UserResponse {
             id: "1".to_string(),
             name: "dev day".to_string(),
             username: format!("{}", request.into_inner().username),
