@@ -7,7 +7,7 @@ mod user {
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let mut client = UserClient::connect("http://[::1]:50051").await?;
+    let mut client = UserClient::connect("http://0.0.0.0:50051").await?;
 
     let request = tonic::Request::new(UserRequest {
         username: "em".into(),
