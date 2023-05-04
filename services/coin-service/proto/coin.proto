@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package coin;
+
+message CoinRequest {
+  string username = 1;
+}
+
+message CoinResponse {
+  string coin = 1;
+}
+
+service Coin {
+  rpc GetCoin (CoinRequest) returns (CoinResponse);
+}
