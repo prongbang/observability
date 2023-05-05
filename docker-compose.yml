@@ -92,7 +92,7 @@ services:
 
   alertmanager:
     container_name: alertmanager
-    image: prom/alertmanager:v0.25.0
+    image: prom/alertmanager
     ports:
       - 9093:9093
     command:
