@@ -1,3 +1,4 @@
+# brew install protobuf
 # go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28
 # go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2
 # make gen name=auth
@@ -12,6 +13,9 @@ gen_auth:
 gen_user:
 	make gen name=user
 
+gen_coin:
+	make gen name=coin
+
 run_server:
 	go run .
 
@@ -23,12 +27,12 @@ run_image:
 
 get_login:
 	curl --request GET -sL \
-	     --url 'http://localhost:3000/v1/login'
+	     --url 'http://localhost:8000/v1/login'
 
 get_user:
 	curl --request GET -sL \
-	     --url 'http://localhost:3000/v1/user'
+	     --url 'http://localhost:8000/v1/user'
 
 get_coin:
 	curl --request GET -sL \
-	     --url 'http://localhost:3000/v1/coin'
+	     --url 'http://localhost:8000/v1/coin'

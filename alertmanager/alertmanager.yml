@@ -57,12 +57,12 @@ route:
     - weekends
 
 receivers:
-#  - name: 'webhook.default'
-#    webhook_configs:
-#      - url: 'http://webhook:8080/webhook/default'
-#  - name: 'webhook.warning'
-#    webhook_configs:
-#      - url: 'http://webhook:8080/webhook/warning'
-#  - name: 'webhook.critical'
-#    webhook_configs:
-#      - url: 'http://webhook:8080/webhook/critical'
+  - name: 'webhook.default'
+    webhook_configs:
+      - url: 'http://webhook:8080/webhook/default'
+  - name: 'webhook.warning'
+    webhook_configs:
+      - url: 'http://webhook:8080/webhook/warning'
+  - name: 'webhook.critical'
+    webhook_configs:
+      - url: 'http://webhook:8080/webhook/critical'
