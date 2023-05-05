@@ -1,0 +1,13 @@
+groups:
+- name: my-alerts
+  rules:
+  - alert: NodeExporterDown1Min
+    expr: up{job="node-exporter"} == 1
+    for: 1m
+    labels:
+      severity: warning
+  - alert: NodeExporterDown2Mins
+    expr: up{job="node-exporter"} == 1
+    for: 2m
+    labels:
+      severity: critical

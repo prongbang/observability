@@ -1,15 +1,130 @@
 services:
   grafana:
     container_name: grafana
+    image: grafana/grafana
+    user: "1000:1000"
+    environment:
+      GF_SERVER_DOMAIN: 9000-${WEB_HOST}
+    volumes:
+      - ./grafana/data/:/var/lib/grafana
+      - ./grafana/config/:/etc/grafana/
+    networks:
+      - monitoring
 
   jaeger:
     container_name: jaeger
+    image: jaegertracing/all-in-one:1.43.0
+    user: "1000:1000"
+    ports:
+      - 6831:6831/udp
+      - 16686:16686
+    volumes:
+      - "./jaeger/jaeger-ui.json:/etc/jaeger/jaeger-ui.json"
+      - "./jaeger/data/:/badger/"
+    command: --query.ui-config /etc/jaeger/jaeger-ui.json
+    environment:
+      METRICS_STORAGE_TYPE: prometheus
+      PROMETHEUS_SERVER_URL: http://prometheus:9090
+      SPAN_STORAGE_TYPE: badger
+      BADGER_EPHEMERAL: false
+      BADGER_DIRECTORY_VALUE: /badger/data
+      BADGER_DIRECTORY_KEY: /badger/key
+    networks:
+      - monitoring
+
+  otel_collector:
+    container_name: otel-collector
+    image: otel/opentelemetry-collector-contrib:0.75.0
+    volumes:
+      - "./otel-collector/otel-collector-config.yml:/etc/otelcol/otel-collector-config.yml"
+    command: --config /etc/otelcol/otel-collector-config.yml
+    ports:
+      - "4317:4317"
+    depends_on:
+      - jaeger
+    networks:
+      - monitoring
 
   loki:
     container_name: loki
+    image: grafana/loki:2.7.5
+    ports:
+      - 3100:3100
+    command:
+      - -config.file=/etc/loki/local-config.yaml
+    volumes:
+      - ./loki/loki-config.yml:/etc/loki/local-config.yaml
 
   prometheus:
     container_name: prometheus
+    image: prom/prometheus:v2.43.0
+    user: "1000:1000"
+    volumes:
+      - ./prometheus/data:/prometheus
+      - ./prometheus/config/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus/config/rules:/etc/prometheus/rules/
+    ports:
+      - 9090:9090
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --web.console.libraries=/usr/share/prometheus/console_libraries
+      - --web.console.templates=/usr/share/prometheus/consoles
+      - --web.enable-lifecycle
+      - --web.external-url=https://9090-${WEB_HOST}
+    networks:
+      - monitoring
+
+  promtail:
+    container_name: promtail
+    image: grafana/promtail:2.7.5
+    ports:
+      - 9080:9080
+    environment:
+      CLOUDSHELL_USER: ${USER}
+    command:
+      - -config.file=/etc/promtail/config.yml
+      - -config.expand-env=true
+    volumes:
+      - ./promtail/config.yml:/etc/promtail/config.yml
+      - /var/log:/var/log
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - monitoring
+
+  alertmanager:
+    container_name: alertmanager
+    image: prom/alertmanager:v0.25.0
+    user: "1000:1000"
+    ports:
+      - 9093:9093
+    command:
+      - --config.file=/etc/alertmanager/alertmanager.yml
+      - --storage.path=/alertmanager
+      - --web.external-url=https://9093-${WEB_HOST}
+      - --log.level=debug
+    volumes:
+      - ./alertmanager/data:/alertmanager
+      - ./alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+    networks:
+      - monitoring
+
+  node-exporter:
+    container_name: node-exporter
+    image: prom/node-exporter:v1.5.0
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    ports:
+      - 9100:9100
+    networks:
+      - monitoring
 
   main_service:
     container_name: main-service
@@ -48,4 +163,9 @@ services:
       dockerfile: ./services/coin-service/Dockerfile
     ports:
       - 50053:50053
+    networks:
+      - monitoring
 
+networks:
+  monitoring:
+    driver: bridge
