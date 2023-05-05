@@ -129,44 +129,44 @@ services:
   main_service:
     container_name: main-service
     build:
-      context: ./
-      dockerfile: ./services/main-service/Dockerfile
+      context: ./services/main-service
+      dockerfile: Dockerfile
     depends_on:
-      - auth-service
-      - user-service
-      - coin-service
+      - auth_service
+      - user_service
+      - coin_service
     networks:
       - monitoring
 
   auth_service:
     container_name: auth-service
     build:
-      context: ./
-      dockerfile: ./services/auth-service/Dockerfile
+      context: ./services/auth-service
+      dockerfile: Dockerfile
     ports:
       - 50052:50052
     depends_on:
-      - user-service
+      - user_service
     networks:
       - monitoring
 
   user_service:
     container_name: user-service
     build:
-      context: ./
-      dockerfile: ./services/user-service/Dockerfile
+      context: ./services/user-service
+      dockerfile: Dockerfile
     ports:
       - 50051:50051
     depends_on:
-      - coin-service
+      - coin_service
     networks:
       - monitoring
 
   coin_service:
     container_name: coin-service
     build:
-      context: ./
-      dockerfile: ./services/coin-service/Dockerfile
+      context: ./services/coin-service
+      dockerfile: Dockerfile
     ports:
       - 50053:50053
     networks:
